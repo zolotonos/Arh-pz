@@ -64,9 +64,38 @@ app.get('/items', authMiddleware, (req, res) => {
     res.status(200).json(items.filter(i => i.owner === req.user.email));
 });
 
+app.put('/items/:id', authMiddleware, (req, res) => {
+    const { title, year, material } = req.body;
+    const itemId = parseInt(req.params.id);
+    const itemIndex = items.findIndex(i => i.id === itemId && i.owner === req.user.email);
+
+    if (itemIndex === -1) {
+        return res.status(404).json({ error: "Not Found" });
+    }
+    if (!validateItem(title, year, material)) {
+        return res.status(400).json({ error: "Invalid data" });
+    }
+
+    items[itemIndex] = { ...items[itemIndex], title, year, material };
+    res.status(200).json(items[itemIndex]);
+});
+
+app.delete('/items/:id', authMiddleware, (req, res) => {
+    const itemId = parseInt(req.params.id);
+    const itemIndex = items.findIndex(i => i.id === itemId && i.owner === req.user.email);
+
+    if (itemIndex === -1) {
+        return res.status(404).json({ error: "Not Found" });
+    }
+
+    items.splice(itemIndex, 1);
+    res.status(204).send();
+});
+
 // Експорт для тестування. Сервер запускається лише якщо файл викликано напряму.
 if (require.main === module) {
     app.listen(3000, () => console.log("Server running on port 3000"));
 }
+
 
 module.exports = { app, validateItem, users, items };

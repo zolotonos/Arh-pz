@@ -1,8 +1,6 @@
 const { NotFoundError } = require('../domain/errors');
 
-// ==========================================
 // COMMANDS (Операції запису)
-// ==========================================
 
 class ItemCreateCommand {
     constructor(title, yearRaw, material, ownerEmail) {
@@ -79,9 +77,7 @@ class ItemDeleteCommandHandler {
     }
 }
 
-// ==========================================
 // QUERIES (Операції читання)
-// ==========================================
 
 class GetItemsListQuery {
     constructor(ownerEmail) {
@@ -116,9 +112,6 @@ class GetItemsListQueryHandler {
     }
 }
 
-/**
- * Запит на отримання конкретного предмета
- */
 class GetItemByIdQuery {
     constructor(id, ownerEmail) {
         this.id = id;
@@ -126,24 +119,18 @@ class GetItemByIdQuery {
     }
 }
 
-/**
- * Обробник запиту на отримання конкретного предмета
- */
 class GetItemByIdQueryHandler {
     constructor(itemRepository) {
         this.itemRepository = itemRepository;
     }
 
     async execute(query) {
-        // Шукаємо доменну сутність
         const item = await this.itemRepository.findByIdAndOwner(query.id, query.ownerEmail);
         
-        // Викидаємо помилку, якщо не знайдено (як і в Commands)
         if (!item) {
             throw new NotFoundError('Item not found');
         }
 
-        // Повертаємо DTO (Read Model), а не саму сутність
         return new ItemReadModel(
             item.id,
             item.title,

@@ -9,7 +9,7 @@ const users = [];
 const items = [];
 let itemIdCounter = 1;
 
-// --- Выделенная бизнес-логика для Unit-тестов ---
+// --- Виділена бізнес-логіка для Unit-тестів ---
 const validateItem = (title, year, material) => {
     const currentYear = new Date().getFullYear();
     return !!(title && year && material && year <= currentYear); // Інваріант: час не в минулому
